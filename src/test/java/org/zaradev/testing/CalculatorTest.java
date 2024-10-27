@@ -3,6 +3,9 @@ package org.zaradev.testing;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -14,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CalculatorTest {
@@ -57,20 +61,20 @@ public class CalculatorTest {
         int somme = calculatorUnderTest.add(a, b);
 
         // Assert
-        assertEquals(5, somme);
+        assertThat(somme).isEqualTo(5);
     }
 
     @Test
     void multiply_shouldReturnTheProduct_ofTwoIntegers() {
         // Arrange
-        int a = 2;
-        int b = 3;
+        int a = 42;
+        int b = 11;
 
         // Act
         int result = calculatorUnderTest.multiplay(a, b);
 
         // Assert
-        assertEquals(6, result);
+        assertThat(result).isEqualTo(462);
     }
 
     @ParameterizedTest(name = "{0} x 0 doit être égal à 0")
@@ -82,7 +86,7 @@ public class CalculatorTest {
         final int actualResult = calculatorUnderTest.multiplay(arg, 0);
 
         // Assert -- ça vaut toujours zéro !
-        assertEquals(0, actualResult);
+        assertThat(actualResult).isEqualTo(0);
     }
 
     @ParameterizedTest(name = "{0} + {1} should equal to {2}")
@@ -94,7 +98,7 @@ public class CalculatorTest {
         int actualResult = calculatorUnderTest.add(arg1, arg2);
 
         // Assert
-        assertEquals(expectResult, actualResult);
+        assertThat(actualResult).isEqualTo(expectResult);
     }
 
     @Timeout(3)
@@ -108,4 +112,46 @@ public class CalculatorTest {
         //Assert
 
     }
+
+    @Test
+    public void listDigits_shouldReturnsTheListOfDigits_ofPositiveInteger () {
+        // GIVEN
+        final int number = 95897;
+
+        // WHEN
+        final Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
+
+        // THEN
+        // final Set<Integer> expectDigits = Stream.of(5,7,8,9).collect(Collectors.toSet());
+        assertThat(actualDigits).containsExactlyInAnyOrder(5,7,8,9);
+    }
+
+    @Test
+    public void listDigits_shouldReturnsTheListOfDigits_ofNegativeInteger () {
+        // GIVEN
+        final int number = -124432;
+
+        // WHEN
+        final Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
+
+        // THEN
+        // final Set<Integer> expectDigits = Stream.of(1,2,3,4).collect(Collectors.toSet());
+
+        assertThat(actualDigits).containsExactlyInAnyOrder(1,2,3,4);
+    }
+
+    @Test
+    public void listDigits_shouldReturnsTheListOfZero_ofZero () {
+        // GIVEN
+        final int number = 0;
+
+        // WHEN
+        final Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
+
+        // THEN
+        // final Set<Integer> expectDigits = Stream.of(0).collect(Collectors.toSet());
+
+        assertThat(actualDigits).containsExactly(0);
+    }
+
 }
